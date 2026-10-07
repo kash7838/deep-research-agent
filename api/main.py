@@ -53,10 +53,18 @@ def run_research(request: ResearchRequest):
     Triggers the end-to-end autonomous deep research pipeline for a given topic.
     """
     try:
+        # --- Add token budget safeguard here ---
+        def estimate_tokens(text: str) -> int:
+            return len(text) // 4
+
+        if estimate_tokens(request.topic) > 100:
+            request.topic = request.topic[:400]
+        # ----------------------------------------
+
         logger.info(f"Received API request for research topic: '{request.topic}'")
         agent = DeepResearchAgent()
         
-        # Run the full research pipeline (plans, searches, extracts, synthesizes, and saves)
+        # Run the full research pipeline
         report = agent.run_research(request.topic)
         
         # Find the latest saved report in the outputs directory
