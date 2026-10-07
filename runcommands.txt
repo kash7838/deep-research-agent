@@ -1,0 +1,6 @@
+
+PYTHONPATH=. uv run python run.py --topic "Latest advancements in agentic AI frameworks and multi-agent orchestration in 2026"
+
+PYTHONPATH=. uv run pytest evaluation/test_agent.py -v
+
+PYTHONPATH=. uv run python run.py --topic "Latest advancements in agentic AI frameworks and multi-agent orchestration in 2026"
