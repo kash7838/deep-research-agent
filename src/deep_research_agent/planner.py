@@ -19,13 +19,19 @@ class Planner:
     Step 1: Deconstructs a high-level user research topic into modular, targeted sub-queries.
     """
     def __init__(self):
+        if not settings.OPENAI_API_KEY:
+            raise ValueError("OPENAI_API_KEY is missing from environment variables or settings.")
         self.client = OpenAI(api_key=settings.OPENAI_API_KEY)
         self.model = settings.MODEL_NAME
 
     def generate_plan(self, topic: str) -> ResearchPlan:
         """
-        Generates a structured research plan with sub-questions using LLM-based function/structured output.
+        Generates a structured research plan with sub-questions using LLM-based structured output.
         """
+        # Enforce strict token safeguard on incoming topic (approx 4 chars per token)
+        if len(topic) // 4 > 100:
+            topic = topic[:400]
+
         prompt = (
             f"You are an expert research strategist. Your goal is to deconstruct the following research topic "
             f"into exactly {settings.MAX_SUB_QUESTIONS} distinct, highly focused sub-queries that together provide "

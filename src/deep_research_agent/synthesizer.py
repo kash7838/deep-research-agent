@@ -8,9 +8,11 @@ from config.settings import settings
 class Synthesizer:
     """
     Step 4: Synthesizes extracted text chunks and exact citation URLs into a 
-    cohesive, comprehensive Markdown research report.
+    cohesive, comprehensive research report.
     """
     def __init__(self):
+        if not settings.OPENAI_API_KEY:
+            raise ValueError("OPENAI_API_KEY is missing from environment variables or settings.")
         self.client = OpenAI(api_key=settings.OPENAI_API_KEY)
         self.model = settings.MODEL_NAME
 
@@ -19,7 +21,6 @@ class Synthesizer:
         Synthesizes the research report using the extracted chunks and links sources 
         back to their precise URLs.
         """
-    
         # Limit total chunks to fit safely within context (e.g., max 25 chunks)
         max_chunks = 25
         limited_sources = extracted_sources[:max_chunks]

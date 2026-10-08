@@ -52,6 +52,16 @@ class SearchExecutor:
 
     def execute_searches(self, queries: List[str]) -> List[Dict[str, Any]]:
         """
-        Synchronous wrapper to run concurrent searches.
+        Synchronous wrapper to run concurrent searches safely, handling existing event loops.
         """
-        return asyncio.run(self.execute_searches_async(queries))
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = None
+
+        if loop and loop.is_running():
+            # If an event loop is already running (e.g., in some server environments), 
+            # create tasks or run synchronously to avoid runtime errors.
+            return [self.execute_single_query(q) for q in queries]
+        else:
+            return asyncio.run(self.execute_searches_async(queries))
